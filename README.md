@@ -1,124 +1,74 @@
-Bilkul! Yahaan main aapke **Resume Builder SaaS Application** ke liye ek professional aur comprehensive README file draft kar raha hoon, jo GitHub ya deployment ke liye ready ho. Aap apne application ke features ke hisaab se customize kar sakte ho.
+# Startup - Free Next.js Startup Website Template
 
----
+Startup is a free, open-source, and premium-quality [**Next.js startup website template**](https://nextjstemplates.com/templates/startup) that comes with everything you need to launch a startup, business, or SaaS website, including all essential sections, components, and pages.
 
-# Resume Builder SaaS
+If you're looking for a high-quality and visually appealing, feature-rich Next.js Template for your next startup, SaaS, or business website, this is the perfect choice and starting point for you!
 
-**Resume Builder SaaS** ek web-based application hai jo users ko professional resumes aur CVs create karne mein madad karta hai, bina kisi design ya formatting ke tension ke. Users apne data input karke, multiple templates me attractive resumes generate kar sakte hain aur unhe download ya share kar sakte hain.
+### ✨ Key Features
+- Crafted for Startup and SaaS Business
+- Next.js and Tailwind CSS
+- All Essential Business Sections and Pages
+- High-quality and Clean Design
+- Dark and Light Version
+- TypeScript Support
+and Much More ...
 
----
+### 🙌 Detailed comparison between the Free and Pro versions of Startup
 
-## Table of Contents
-
-* [Features](#features)
-* [Demo](#demo)
-* [Tech Stack](#tech-stack)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Folder Structure](#folder-structure)
-* [Contributing](#contributing)
-* [License](#license)
-
----
-
-## Features
-
-* User Authentication (Sign up / Login / Logout)
-* Multiple Resume Templates
-* Live Preview of Resume
-* Download Resume as PDF
-* Save and Edit Resumes
-* Cloud Storage for User Data
-* Responsive Design for Mobile and Desktop
-
----
-
-## Demo
-
-Agar aapka SaaS deployed hai, yahan demo ka link add karein:
-
-```
-https://your-app-domain.com
-```
-
----
-
-## Tech Stack
-
-* **Frontend:** React, Next.js, Tailwind CSS
-* **Backend:** Node.js, Express (ya Next.js API Routes)
-* **Database:** MongoDB / PostgreSQL
-* **Authentication:** Firebase Auth / JWT
-* **Cloud Storage:** AWS S3 / Firebase Storage
-* **PDF Generation:** jsPDF / html2pdf
-
----
-
-## Installation
-
-**Local Setup ke liye:**
-
-1. Repository clone karein:
-
-```bash
-git clone https://github.com/username/resume-builder-saas.git
-cd resume-builder-saas
-```
-
-2. Dependencies install karein:
-
-```bash
-npm install
-# ya
-yarn install
-```
-
-3. Environment variables set karein:
-
-```bash
-cp .env.example .env
-```
-
-* `.env` file me apne database URI, API keys, aur cloud storage credentials daalein
-
-4. Development server run karein:
-
-```bash
-npm run dev
-# ya
-yarn dev
-```
-
-App ab `http://localhost:3000` pe accessible hoga.
-
----
-
-## Usage
-
-1. Sign Up / Login karein
-2. Personal aur professional details fill karein
-3. Resume template select karein
-4. Live preview dekhein
-5. Resume download ya share karein
+| Feature             | Free | Pro |
+|---------------------|------------|----------|
+| Next.js Landing Page             | ✅ Yes      | ✅ Yes      |
+| All The Integrations - Auth, DB, Payments, Blog and many more ...             | ❌ No      | ✅ Yes |
+| Homepage Variations             | 1      | 2 |
+| Additional SaaS Pages and Components             | ❌ No      | ✅ Yes |
+| Functional Blog with Sanity       | ❌ No      | ✅ Yes |
+| Use with Commercial Projects            | ✅ Yes      | ✅ Yes      |
+| Lifetime Free Updates             | ✅ Yes      | ✅ Yes |
+| Email Support       | ❌ No         | ✅ Yes       |
+| Community Support         | ✅ Yes         | ✅ Yes       |
 
 
----
+### [🔥 Get Startup Pro](https://nextjstemplates.com/templates/saas-starter-startup)
 
-## Contributing
+[![Startup Pro](https://raw.githubusercontent.com/NextJSTemplates/startup-nextjs/main/startup-pro.webp)](https://nextjstemplates.com/templates/saas-starter-startup)
 
-1. Fork the repository
-2. Create a new branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m "Add some feature"`
-4. Push to branch: `git push origin feature/your-feature`
-5. Open a Pull Request
-
----
-
-## License
-
-This project is licensed under the **MIT License**. See `LICENSE` for details.
-
----
+Startup Pro - Expertly crafted for fully-functional, high-performing SaaS startup websites. Comes with with Authentication, Database, Blog, and all the essential integrations necessary for SaaS business sites.
 
 
-Kya main wo version bhi bana doon?
+- [🚀 View Free Demo](https://startup.nextjstemplates.com/)
+
+- [🚀 View Pro Demo](https://startup-pro.nextjstemplates.com/)
+
+- [📦 Download](https://nextjstemplates.com/templates/startup)
+
+- [🔥 Get Pro](https://nextjstemplates.com/templates/saas-starter-startup)
+
+- [🔌 Documentation](https://nextjstemplates.com/docs)
+
+### ⚡ Deploy Now
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FNextJSTemplates%2Fstartup-nextjs)
+
+[![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/NextJSTemplates/startup-nextjs)
+
+
+### 📄 License
+Startup is 100% free and open-source, feel free to use with your personal and commercial projects.
+
+### 💜 Support
+If you like the template, please star this repository to inspire the team to create more stuff like this and reach more users like you!
+
+### ✨ Explore and Download - Free [Next.js Templates](https://nextjstemplates.com)
+
+### Update Log
+
+**10 April 2025**
+- Fix peer deps issue with Next.js 15
+- Upgrade to tailwind v4
+- Refactored blog cards for handling edge cases(text ellipsis on bio, keeping author details at the bottom etc.)
+- Re-wrote blog details page with icons separation, fallback author image and better markup.
+- Fixed duplicate key errors on homepage.
+- Separated icons on theme-switcher button, and refactored scroll-to-top button.
+
+**29 Jan 2025**
+- Upgraded to Next.js 15
