@@ -1,6 +1,11 @@
 "use client";
 
-import { createSlice, createAsyncThunk, PayloadAction, createAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createAction,
+} from "@reduxjs/toolkit";
 import { apiFetch } from "@/lib/api";
 import toast from "react-hot-toast";
 import { Plan } from "@/types/common";
@@ -91,9 +96,8 @@ const initialState: PlansState = {
   confirmDeleteId: null,
 };
 
-
-export const resetNewPlan = createAction('plans/resetNewPlan');
-export const resetEditPlan = createAction('plans/resetEditPlan');
+export const resetNewPlan = createAction("plans/resetNewPlan");
+export const resetEditPlan = createAction("plans/resetEditPlan");
 
 // ---------- Async Thunks ----------
 
@@ -327,7 +331,13 @@ const plansSlice = createSlice({
         state.submitting = false;
       })
       .addCase(resetNewPlan, (state) => {
-        state.newPlan = { name: '', price: 0, type: '', downloadLimit: 0, durationDays: 0 };
+        state.newPlan = {
+          name: "",
+          price: 0,
+          type: "",
+          downloadLimit: 0,
+          durationDays: 0,
+        };
       })
       .addCase(resetEditPlan, (state) => {
         state.editPlan = null;

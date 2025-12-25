@@ -1,6 +1,6 @@
-'use client';
-import React from 'react';
-import { inputBase } from './InputBase';
+"use client";
+import React from "react";
+import { inputBase } from "./InputBase";
 
 type Props = {
   placeholder?: string;
@@ -11,7 +11,18 @@ type Props = {
   disabled?: boolean;
 };
 
-function TextInputImpl({ placeholder, value, onChange, label, required }: Props) {
+function TextInputImpl({
+  placeholder,
+  value = "",
+  onChange,
+  label,
+  required,
+  disabled,
+}: Props) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(e.target.value);
+  };
+
   return (
     <div className="space-y-1">
       {label && (
@@ -20,10 +31,12 @@ function TextInputImpl({ placeholder, value, onChange, label, required }: Props)
         </label>
       )}
       <input
+        type="text"
         className={inputBase}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        onChange={handleChange}
       />
     </div>
   );

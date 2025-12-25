@@ -44,7 +44,7 @@ export default function PrivateRoute({ children }: Props) {
         const config = protectedRoutes.find((r) =>
           r.nested
             ? pathname === r.path || pathname.startsWith(r.path + "/")
-            : pathname === r.path
+            : pathname === r.path,
         );
 
         // If route is protected and role does not match -> redirect
@@ -72,8 +72,8 @@ export default function PrivateRoute({ children }: Props) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="text-center">
-          <div className="h-12 w-12 border-4 border-t-transparent border-primary rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
+          <div className="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Validating access...
           </p>
         </div>

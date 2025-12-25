@@ -285,7 +285,7 @@ export default function SigninPage() {
                 <div>
                   <Link
                     href="/admin-signin-page"
-                    className="mt-4 flex justify-center items-center text-primary hover:underline"
+                    className="text-primary mt-4 flex items-center justify-center hover:underline"
                   >
                     Admin Login
                   </Link>

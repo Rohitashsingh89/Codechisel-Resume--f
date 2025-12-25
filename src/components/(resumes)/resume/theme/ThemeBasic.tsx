@@ -1,39 +1,73 @@
 "use client";
 
-import { ResumeShape } from "@/types/resumeTemplate";
+import { ResumeShape, TemplateConfig } from "@/types/resumeTemplate";
 import { formatDate } from "@/utils/apiUtility";
 
 export default function ThemeBasic({
   data,
   templateType,
   completion,
+  config,
 }: {
   data: ResumeShape;
   templateType: string;
   completion: number;
+  config?: TemplateConfig | null;
 }) {
+  // Fallback config – hardcoded, hamesha safe
+  const safeConfig: TemplateConfig = {
+    templateId: "fallback",
+    name: "Fallback Template",
+    layout: {
+      type: config?.layout?.type || "single-column",
+      sectionsOrder: config?.layout?.sectionsOrder || data.order,
+      leftColumnSections: config?.layout?.leftColumnSections || data.order,
+      rightColumnSections: config?.layout?.rightColumnSections || [],
+      columnRatio: "30:70",
+    },
+    header: {
+      showProfileImage: false,
+      alignment: "center",
+      nameSize: 30,
+      roleSize: 16,
+      showDividerBelow: true,
+      spacingBelow: 20,
+    },
+    page: config?.page || {
+      size: "A4",
+      margins: { top: 24, left: 24, right: 24, bottom: 24 },
+      background: "#FFFFFF",
+    },
+    fonts: config?.fonts || {
+      primary: "Poppins",
+      headingSize: 18,
+      subheadingSize: 14,
+      bodySize: 12,
+      lineHeight: 1.5,
+    },
+    colors: config?.colors || {
+      primary: "#111827",
+      text: "#1F2937",
+      headingText: "#020617",
+      subText: "#4B5563",
+      divider: "#E5E7EB",
+      accent: "#2563EB",
+    },
+    sections: config?.sections || {},
+  };
+
+  const layoutType = safeConfig.layout.type;
+  const leftKeys = safeConfig.layout.leftColumnSections || data.order;
+  const rightKeys = safeConfig.layout.rightColumnSections || [];
+
   const renderSection = (key: string) => {
     switch (key) {
       case "personal":
         return (
           <section>
-            <h1
-              className={
-                templateType === "classic"
-                  ? "text-3xl font-semibold"
-                  : "text-2xl font-medium tracking-tight"
-              }
-            >
-              {data.personal.fullName}
-            </h1>
-            <div
-              className={
-                templateType === "classic" ? "text-gray-600" : "text-gray-500"
-              }
-            >
-              {data.personal.designation}
-            </div>
-            <p className="mt-2">{data.personal.summary}</p>
+            <h1 className="text-2xl font-semibold">{data.personal.fullName}</h1>
+            <div className="text-gray-600">{data.personal.designation}</div>
+            <p className="mt-1">{data.personal.summary}</p>
           </section>
         );
       case "contact":
@@ -63,7 +97,6 @@ export default function ThemeBasic({
                   {e.start ? formatDate(e.start) : ""} -{" "}
                   {e.end ? formatDate(e.end) : "Present"}
                 </div>
-
                 <p>{e.description}</p>
               </div>
             ))}
@@ -124,7 +157,7 @@ export default function ThemeBasic({
       case "additional":
         return (
           <section>
-            <h3 className="font-semibold">Additional Information</h3>
+            <h3 className="font-semibold">Additional</h3>
             <div className="mt-1">
               <div className="font-medium">Languages</div>
               <ul className="ml-5 list-disc">
@@ -146,16 +179,33 @@ export default function ThemeBasic({
     }
   };
 
+  // Two-column layout
+  if (layoutType === "two-column") {
+    return (
+      <div className="bg-white p-5 text-gray-900 dark:bg-gray-800 dark:text-gray-200">
+        <div className="grid grid-cols-[minmax(0,0.3fr)_minmax(0,0.7fr)] gap-6">
+          <div className="space-y-4">
+            {leftKeys.map((key) => (
+              <div key={key}>{renderSection(key)}</div>
+            ))}
+          </div>
+          <div className="space-y-4">
+            {rightKeys.map((key) => (
+              <div key={key}>{renderSection(key)}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Single-column fallback
   return (
     <div className="space-y-4 bg-white p-5 text-gray-900 dark:bg-gray-800 dark:text-gray-200">
-      {data.order.map((key, index) => (
+      {(safeConfig.layout.sectionsOrder || data.order).map((key, index) => (
         <div
           key={key}
-          className={`pb-3 ${
-            index !== data.order.length - 1
-              ? "border-b border-gray-300 dark:border-gray-700"
-              : ""
-          }`}
+          className={`pb-3 ${index !== data.order.length - 1 ? "border-b border-gray-300 dark:border-gray-700" : ""}`}
         >
           {renderSection(key)}
         </div>

@@ -16,7 +16,7 @@ export default function MobileSheet({
 }) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const backdropRef = useRef<HTMLDivElement | null>(null);
-
+  const firstOpenRef = useRef(false);
   // Body lock (cross‑browser + iOS)
   useEffect(() => {
     if (!open) return;
@@ -53,7 +53,11 @@ export default function MobileSheet({
 
   useEffect(() => {
     if (!open) return;
-    panelRef.current?.focus();
+
+    if (!firstOpenRef.current) {
+      firstOpenRef.current = true;
+      panelRef.current?.focus();
+    }
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -79,15 +83,17 @@ export default function MobileSheet({
         aria-label={title}
         ref={panelRef}
         tabIndex={-1}
-        className="absolute inset-x-0 bottom-0 max-h-[90vh] w-full rounded-t-2xl bg-white shadow-2xl outline-none transition-transform duration-200 ease-out dark:bg-gray-900 flex flex-col"
+        className="absolute inset-x-0 bottom-0 flex max-h-[90vh] w-full flex-col rounded-t-2xl bg-white shadow-2xl transition-transform duration-200 ease-out outline-none dark:bg-gray-900"
         style={{ transform: "translateY(0%)" }}
       >
         <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-gray-300 dark:bg-gray-700" />
         <div className="flex items-center justify-between px-4 py-3">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+            {title}
+          </h3>
           <button
             onClick={onClose}
-            className="h-11 w-11 -mr-2 flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 dark:text-gray-300 dark:hover:bg-gray-800"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 active:scale-95 dark:text-gray-300 dark:hover:bg-gray-800"
             aria-label="Close"
           >
             ✕
@@ -96,7 +102,7 @@ export default function MobileSheet({
 
         {/* Scrollable content: min-h-0 is CRITICAL in flex for scrolling */}
         <div
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 pb-6"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-6"
           style={{ WebkitOverflowScrolling: "touch" }}
         >
           {children}

@@ -327,7 +327,7 @@ export default function PlansPage() {
           columnConfig={columnConfig}
           loading={loading}
           totalPages={totalPages}
-          totalPlans={totalPlans}
+          totalItems={totalPlans}
           page={page}
           limit={limit}
           onPageChange={(p) => dispatch(setPage(p))}

@@ -322,28 +322,28 @@ const subscriptionsSlice = createSlice({
     },
     updateEdit(state, action: PayloadAction<Partial<Subscription>>) {
       if (!state.editSubscription) return;
-      
+
       // ⭐ TYPE-SAFE MERGE
       const payload = action.payload;
-      state.editSubscription = { 
-        ...state.editSubscription, 
-        ...payload 
+      state.editSubscription = {
+        ...state.editSubscription,
+        ...payload,
       };
-      
+
       // ⭐ TYPE-SAFE User/Plan ID handling
       if (payload.userId !== undefined) {
-        if (typeof payload.userId === 'string') {
-          state.editSubscription.userId = payload.userId;  // ✅ String ID
-        } else if (payload.userId && '_id' in payload.userId) {
-          state.editSubscription.userId = payload.userId;  // ✅ Full object
+        if (typeof payload.userId === "string") {
+          state.editSubscription.userId = payload.userId; // ✅ String ID
+        } else if (payload.userId && "_id" in payload.userId) {
+          state.editSubscription.userId = payload.userId; // ✅ Full object
         }
       }
-      
+
       if (payload.planId !== undefined) {
-        if (typeof payload.planId === 'string') {
-          state.editSubscription.planId = payload.planId;  // ✅ String ID
-        } else if (payload.planId && '_id' in payload.planId) {
-          state.editSubscription.planId = payload.planId;  // ✅ Full object
+        if (typeof payload.planId === "string") {
+          state.editSubscription.planId = payload.planId; // ✅ String ID
+        } else if (payload.planId && "_id" in payload.planId) {
+          state.editSubscription.planId = payload.planId; // ✅ Full object
         }
       }
     },

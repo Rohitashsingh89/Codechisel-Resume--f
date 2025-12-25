@@ -447,7 +447,7 @@ export default function PaymentsPage() {
           columnConfig={columnConfig}
           loading={loading}
           totalPages={totalPages}
-          totalPlans={totalPayments}
+          totalItems={totalPayments}
           page={page}
           limit={limit}
           onPageChange={(p) => dispatch(setPage(p))}

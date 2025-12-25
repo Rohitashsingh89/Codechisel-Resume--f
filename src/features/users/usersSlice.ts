@@ -67,11 +67,12 @@ export const fetchUsers = createAsyncThunk(
       const res = await apiFetch<{ users: User[] }>("/v1/users");
       return { users: res.users || [] };
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to fetch users";
+      const msg =
+        err?.response?.data?.message || err?.message || "Failed to fetch users";
       toast.error(msg);
       return rejectWithValue(msg);
     }
-  }
+  },
 );
 
 // Add User
@@ -89,13 +90,16 @@ export const addUser = createAsyncThunk(
       dispatch(fetchUsers());
     } catch (err: any) {
       let msg = "Failed to add user";
-      if (err?.message?.includes("E11000 duplicate key error") && err.message.includes("email")) {
+      if (
+        err?.message?.includes("E11000 duplicate key error") &&
+        err.message.includes("email")
+      ) {
         msg = "Email address already exists.";
       }
       toast.error(msg);
       return rejectWithValue(msg);
     }
-  }
+  },
 );
 
 // Update User
@@ -117,30 +121,33 @@ export const updateUser = createAsyncThunk(
       return res.user;
     } catch (err: any) {
       let msg = "Failed to update user";
-      if (err?.message?.includes("E11000 duplicate key error") && err.message.includes("email")) {
+      if (
+        err?.message?.includes("E11000 duplicate key error") &&
+        err.message.includes("email")
+      ) {
         msg = "Email address already exists.";
       }
       toast.error(msg);
       return rejectWithValue(msg);
     }
-  }
+  },
 );
 
 // Delete User
 export const deleteUser = createAsyncThunk(
   "users/deleteUser",
   async (userId: string, { dispatch, rejectWithValue }) => {
-
     try {
       await apiFetch(`/v1/users/${userId}`, { method: "DELETE" });
       toast.success("User deleted successfully!");
       dispatch(fetchUsers());
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "Failed to delete user";
+      const msg =
+        err?.response?.data?.message || err?.message || "Failed to delete user";
       toast.error(msg);
       return rejectWithValue(msg);
     }
-  }
+  },
 );
 
 const usersSlice = createSlice({
@@ -183,7 +190,10 @@ const usersSlice = createSlice({
     },
 
     // Form Updates
-    updateFormData: (state, action: PayloadAction<Partial<UsersState["formData"]>>) => {
+    updateFormData: (
+      state,
+      action: PayloadAction<Partial<UsersState["formData"]>>,
+    ) => {
       state.formData = { ...state.formData, ...action.payload };
     },
 
@@ -203,7 +213,6 @@ const usersSlice = createSlice({
       state.showSuccessPrompt = false;
       state.topMessage = null;
     },
-    
   },
   extraReducers: (builder) => {
     // fetchUsers

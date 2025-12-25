@@ -471,7 +471,7 @@ export default function SubscriptionsPage() {
           columnConfig={columnConfig}
           loading={loading}
           totalPages={totalPages}
-          totalPlans={totalSubscriptions}
+          totalItems={totalSubscriptions}
           page={page}
           limit={limit}
           onPageChange={(p) => dispatch(setPage(p))}

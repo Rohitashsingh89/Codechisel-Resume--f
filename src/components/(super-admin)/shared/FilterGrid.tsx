@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef, useEffect, useState } from "react";
 
 interface FilterOption {
   value: string;
@@ -33,10 +33,9 @@ export default function FilterGrid({
   onToggleColumnsDropdown,
   onToggleColumn,
 }: FilterGridProps) {
-
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // ⭐ OUTSIDE CLICK HANDLER
+  // outside click handler (as-is)
   useEffect(() => {
     if (!showColumnsDropdown) return;
 
@@ -45,7 +44,7 @@ export default function FilterGrid({
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target as Node)
       ) {
-        onToggleColumnsDropdown(); // close dropdown
+        onToggleColumnsDropdown();
       }
     };
 
@@ -62,21 +61,15 @@ export default function FilterGrid({
     };
   }, [showColumnsDropdown, onToggleColumnsDropdown]);
 
-  const debouncedSearch = useCallback((value: string) => {
-    const timeout = setTimeout(() => onSearchChange(value), 300);
-    return () => clearTimeout(timeout);
-  }, [onSearchChange]);
-
   return (
-    <div className="border border-gray-300 bg-white/80 dark:border-gray-700/50 dark:bg-gray-900/30 rounded-xl p-4 sm:p-6">
+    <div className="rounded-xl border border-gray-300 bg-white/80 p-4 sm:p-6 dark:border-gray-700/50 dark:bg-gray-900/30">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-4 xl:grid-cols-4">
-
         {/* SEARCH */}
         <input
           type="text"
           placeholder="Search..."
           value={search}
-          onChange={(e) => debouncedSearch(e.target.value)}
+          onChange={(e) => onSearchChange(e.target.value)}
           className="col-span-1 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 focus:outline-none sm:col-span-2 lg:col-span-1 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100"
         />
 
@@ -112,7 +105,11 @@ export default function FilterGrid({
               strokeWidth={2}
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
 
@@ -135,7 +132,6 @@ export default function FilterGrid({
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

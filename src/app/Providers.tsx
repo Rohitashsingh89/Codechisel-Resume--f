@@ -28,14 +28,14 @@ export function Providers({ children }) {
   ];
 
   const hideLayout = noLayoutRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
+    (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
   // Actual private routes you want
   const privateRoutes = ["/user-dashboard", "/admin-view"];
 
   const isPrivate = privateRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
+    (route) => pathname === route || pathname.startsWith(route + "/"),
   );
 
   return (

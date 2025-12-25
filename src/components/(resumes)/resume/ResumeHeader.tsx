@@ -17,7 +17,7 @@ const ResumeHeader = ({ id }: { id: string }) => {
   const [heading, setHeading] = useState("Untitled Resume");
   const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
-  const [lastChangedAt, setLastChangedAt] = useState<string | null>(null);
+  const [lastChangedAt, setLastChangedAt] = useState<number | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const router = useRouter();
@@ -74,7 +74,7 @@ const ResumeHeader = ({ id }: { id: string }) => {
 
   useEffect(() => {
     if (lastChangeTs) {
-      setLastChangedAt(lastChangeTs.toString());
+      setLastChangedAt(lastChangeTs);
     }
   }, [lastChangeTs]);
 
@@ -113,8 +113,10 @@ const ResumeHeader = ({ id }: { id: string }) => {
   const handleThemeSelect = async (slug: string) => {
     setTemplateType(slug);
     setThemeModalOpen(false);
+
+    setData({ selectedTemplateSlug: slug });
     try {
-      await updateField(id, { templateType: slug });
+      await updateField(id, { templateType: slug, selectedTemplateSlug: slug });
       toast.success("Theme updated");
     } catch (e) {
       toast.error("Failed to update theme");
@@ -128,20 +130,20 @@ const ResumeHeader = ({ id }: { id: string }) => {
         <div className="flex items-center gap-3">
           {isEditing ? (
             <TextInput
-            required
-            placeholder="Mr. Shyam"
-            value={heading}
-            onChange={(value) => setHeading(value)}
-          />
+              required
+              placeholder="Mr. Shyam"
+              value={heading}
+              onChange={(value) => setHeading(value)}
+            />
           ) : (
-            <h2 className="text-lg font-bold sm:text-xl text-primary dark:text-primary">
+            <h2 className="text-primary dark:text-primary text-lg font-bold sm:text-xl">
               {heading}
             </h2>
           )}
           {isEditing ? (
             <button
               onClick={handleCheckClick}
-              className="rounded p-2 text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-500"
+              className="rounded p-2 text-green-700 hover:text-green-900 dark:text-green-300 dark:hover:text-green-500"
               aria-label="Save"
             >
               <FiCheck size={24} />
@@ -281,7 +283,7 @@ const ResumeHeader = ({ id }: { id: string }) => {
               <button
                 onClick={async () => {
                   try {
-                    await apiFetch(`/v1/resumes/${id}`, {method: "DELETE" });
+                    await apiFetch(`/v1/resumes/${id}`, { method: "DELETE" });
                     toast.success("Resume deleted", { position: "top-center" });
                     setShowDeleteConfirmModal(false);
                     router.push("/user-dashboard");
@@ -312,6 +314,7 @@ const ResumeHeader = ({ id }: { id: string }) => {
         data={data}
         templateType={templateType}
         completion={completion}
+        // config={config}
       />
     </>
   );

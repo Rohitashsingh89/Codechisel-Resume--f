@@ -7,7 +7,13 @@ export type ThemePatch = { mode?: "light" | "dark"; color?: string };
 // ✅ Generic API update utility
 export const updateField = async (
   id: string,
-  field: Partial<{ resumeName: string; templateType: string; resumeData: any; theme: ThemePatch; }>,
+  field: Partial<{
+    resumeName: string;
+    templateType: string;
+    selectedTemplateSlug: string | null;
+    resumeData: any;
+    theme: ThemePatch;
+  }>,
 ) => {
   try {
     await apiFetch(`/v1/resumes/${id}`, {
@@ -20,8 +26,12 @@ export const updateField = async (
   }
 };
 
-export function formatDate(date?: string | null, withTime = false): string {
+export function formatDate(
+  date?: string | number | null,
+  withTime = false,
+): string {
   if (!date) return "";
+
   return withTime
     ? moment(date).format("MMM DD, YYYY, h:mm A")
     : moment(date).format("MMM YYYY");

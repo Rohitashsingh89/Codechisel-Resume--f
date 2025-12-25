@@ -5,25 +5,27 @@
 3. Fix Height of layout.
 4. When Download the resume then file name should be controlled by resume header.
 5. Theme Layout Change Image and title instead of just dropdown field.
-6. 
+6.
 
 ## Done
+
 1. Home page (partially)
 2. Resume Builder (MVP)
 3. Export To Excel & Word
-4. 
+4.
 
 ## Upcomming
+
 1. Payment Method
 2. Checkout Page
 3. Cart or Basket
 4. Admin Panel for super admin
-5. 
+5. Custom Field
+6. Reordered the Sections
+7.
 
-
-User * Moderator * Super Admin
+User _ Moderator _ Super Admin
 Only One super admin would be there in any application.
-
 
 <!-- PROJECT_DATA_START
 {

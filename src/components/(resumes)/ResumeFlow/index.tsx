@@ -15,7 +15,9 @@ export default function ResumeFlow() {
   const [currentStep, setCurrentStep] = useState<StepType>("create");
   const [resumeData, setResumeData] = useState<any>(null);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null); // ⭐ Plan ID
-  const [completedSteps, setCompletedSteps] = useState<Set<StepType>>(new Set());
+  const [completedSteps, setCompletedSteps] = useState<Set<StepType>>(
+    new Set(),
+  );
   const [loading, setLoading] = useState(false);
 
   // ✅ REDUX AUTH - Get current user
@@ -25,12 +27,12 @@ export default function ResumeFlow() {
     const currentIndex = STEPS.indexOf(currentStep);
     if (currentIndex < STEPS.length - 1) {
       const nextStep = STEPS[currentIndex + 1] as StepType;
-      
+
       if (currentStep === "payment") {
         await handlePaymentSuccess();
         return;
       }
-      
+
       setCurrentStep(nextStep);
       setCompletedSteps((prev) => new Set([...prev, currentStep]));
     }
@@ -54,14 +56,15 @@ export default function ResumeFlow() {
           amount: selectedPlanId === "basic-plan" ? 99 : 299, // Match your plans
           status: "completed",
           currency: "INR",
-          gatewayResponse: { paymentId: `pay_${Date.now()}`, status: "captured" }
+          gatewayResponse: {
+            paymentId: `pay_${Date.now()}`,
+            status: "captured",
+          },
         }),
       });
 
-      console.log("✅ Payment created:", paymentResponse);
       setCurrentStep("download");
       setCompletedSteps((prev) => new Set([...prev, "payment"]));
-      
     } catch (error: any) {
       console.error("❌ Payment failed:", error);
       alert(error.message || "Payment failed. Please try again.");
@@ -71,7 +74,7 @@ export default function ResumeFlow() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 transition-all duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 transition-all duration-300 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto py-12">
         <ProgressBar
           steps={STEPS}
@@ -82,7 +85,9 @@ export default function ResumeFlow() {
         />
 
         <div className="mt-20">
-          {currentStep === "create" && <Step1CreateResume onNext={setResumeData} />}
+          {currentStep === "create" && (
+            <Step1CreateResume onNext={setResumeData} />
+          )}
           {currentStep === "plan" && (
             <Step2ChoosePlan
               resumePreview={resumeData}
@@ -93,17 +98,23 @@ export default function ResumeFlow() {
               onBack={() => setCurrentStep("create")}
             />
           )}
-          {currentStep === "payment" && selectedPlanId && resumeData && user && (
-            <Step3PaymentDetails
-              selectedPlanId={selectedPlanId}
-              resumePreview={resumeData}
-              onSuccess={handlePaymentSuccess}
-              onBack={() => setCurrentStep("plan")}
-              loading={loading}
-            />
-          )}
+          {currentStep === "payment" &&
+            selectedPlanId &&
+            resumeData &&
+            user && (
+              <Step3PaymentDetails
+                selectedPlanId={selectedPlanId}
+                resumePreview={resumeData}
+                onSuccess={handlePaymentSuccess}
+                onBack={() => setCurrentStep("plan")}
+                loading={loading}
+              />
+            )}
           {currentStep === "download" && resumeData && selectedPlanId && (
-            <Step4DownloadResume resumeData={resumeData} planId={selectedPlanId} />
+            <Step4DownloadResume
+              resumeData={resumeData}
+              planId={selectedPlanId}
+            />
           )}
         </div>
       </div>

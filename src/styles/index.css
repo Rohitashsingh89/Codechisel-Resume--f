@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap')
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap")
 layer(base);
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -25,7 +25,7 @@ layer(base);
   --color-bg-color-dark: #171c28;
 
   --primary-light: color-mix(in srgb, var(--color-primary), white 25%);
-  --primary-dark:  color-mix(in srgb, var(--color-primary), black 25%);
+  --primary-dark: color-mix(in srgb, var(--color-primary), black 25%);
 
   --color-body-color: #788293;
   --color-body-color-dark: #959cb1;
@@ -68,8 +68,12 @@ layer(base);
   padding-inline: 1rem;
 }
 
-.export-mode .split--gradient { display: none; }
-.export-mode .split--solid { display: inline; }
+.export-mode .split--gradient {
+  display: none;
+}
+.export-mode .split--solid {
+  display: inline;
+}
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -170,24 +174,60 @@ button {
   background-clip: text;
 }
 
-.custom-scroll {
-  scrollbar-width: thin;               /* Firefox */
-  scrollbar-color: #64748b #0f172a;    /* thumb track */
-}
-.custom-scroll::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-}
-.custom-scroll::-webkit-scrollbar-track {
-  background: #0f172a;
-  border-radius: 8px;
-}
-.custom-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #38bdf8, #22c55e);
-  border-radius: 8px;
-}
-.custom-scroll::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #7dd3fc, #4ade80);
+@layer utilities {
+  /* Base scrollbar */
+  .custom-scroll {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #94a3b8 #e5e7eb; /* thumb track (light mode) */
+  }
+
+  .custom-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 8px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #38bdf8, #22c55e);
+    border-radius: 8px;
+  }
+
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #7dd3fc, #4ade80);
+  }
+
+  /* 🌙 Dark mode */
+  .dark .custom-scroll {
+    scrollbar-color: #64748b #0f172a;
+  }
+
+  .dark .custom-scroll::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+
+  .dark .custom-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #38bdf8, #22c55e);
+  }
+
+  /* 📱 Mobile (smaller scrollbar) */
+  @media (max-width: 640px) {
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+  }
+
+  /* 🖥️ Large screens (thicker scrollbar) */
+  @media (min-width: 1024px) {
+    .custom-scroll::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+  }
 }
 
 .date-input {
@@ -200,7 +240,9 @@ button {
   background-color: var(--bg);
   color: var(--text);
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .date-input:focus {
@@ -223,7 +265,8 @@ button {
 }
 
 /* Selected date highlight in Flatpickr */
-.flatpickr-day.selected, .flatpickr-day.selected:hover {
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
   background: var(--primary-color);
   color: white;
   border-radius: 0.375rem;
@@ -241,7 +284,9 @@ button {
   font-weight: 600;
   border-radius: 0.375rem;
   border: 1px solid transparent;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .flatpickr-monthDropdown-months:hover {
@@ -266,4 +311,3 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-

@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/hook/reduxHooks";
-import { setCredentials, setLoading, setLoginError } from "@/features/auth/authSlice";
+import {
+  setCredentials,
+  setLoading,
+  setLoginError,
+} from "@/features/auth/authSlice";
 import { setProfile } from "@/features/profile/profileSlice";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -47,7 +51,11 @@ export default function AdminSigninPage() {
     dispatch(setLoading(true));
 
     try {
-      const res = await apiFetch<{ accessToken: string; refreshTokenVal: string; user: UserType }>("/v1/auth/login", {
+      const res = await apiFetch<{
+        accessToken: string;
+        refreshTokenVal: string;
+        user: UserType;
+      }>("/v1/auth/login", {
         method: "POST",
         credentials: "include",
         body: JSON.stringify({ ...form, role: "Admin" }),
@@ -61,12 +69,14 @@ export default function AdminSigninPage() {
 
       localStorage.setItem("accessToken", res.accessToken);
 
-      dispatch(setCredentials({
-        accessToken: res.accessToken,
-        user: res.user,
-        loading: false,
-        loginError: "",
-      }));
+      dispatch(
+        setCredentials({
+          accessToken: res.accessToken,
+          user: res.user,
+          loading: false,
+          loginError: "",
+        }),
+      );
 
       const profile = await apiFetch("/v1/users/me", {
         headers: { Authorization: `Bearer ${res.accessToken}` },
@@ -109,7 +119,13 @@ export default function AdminSigninPage() {
               >
                 <span className="mr-3">
                   {/* SVG copied from normal signin */}
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <g clipPath="url(#clip0_95:967)">
                       <path d="M20.0001 10.2216..." fill="#4285F4" />
                       <path d="M10.2042 20.0001..." fill="#34A853" />
@@ -136,7 +152,9 @@ export default function AdminSigninPage() {
 
               <form onSubmit={onSubmit}>
                 <div className="mb-8">
-                  <label className="text-dark mb-3 block text-sm dark:text-white">Your Email</label>
+                  <label className="text-dark mb-3 block text-sm dark:text-white">
+                    Your Email
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -149,7 +167,9 @@ export default function AdminSigninPage() {
                 </div>
 
                 <div className="relative mb-8">
-                  <label className="text-dark mb-3 block text-sm dark:text-white">Your Password</label>
+                  <label className="text-dark mb-3 block text-sm dark:text-white">
+                    Your Password
+                  </label>
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
@@ -180,7 +200,10 @@ export default function AdminSigninPage() {
                     </label>
                   </div>
                   <div>
-                    <a href="/forgot-password" className="text-primary text-sm font-medium hover:underline">
+                    <a
+                      href="/forgot-password"
+                      className="text-primary text-sm font-medium hover:underline"
+                    >
                       Forgot Password?
                     </a>
                   </div>
@@ -202,70 +225,70 @@ export default function AdminSigninPage() {
 
       {/* SVG background */}
       <div className="absolute top-0 left-0 z-[-1]">
-          <svg
+        <svg
+          width="1440"
+          height="969"
+          viewBox="0 0 1440 969"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            id="mask0_95:1005"
+            style={{ maskType: "alpha" }}
+            maskUnits="userSpaceOnUse"
+            x="0"
+            y="0"
             width="1440"
             height="969"
-            viewBox="0 0 1440 969"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
           >
-            <mask
-              id="mask0_95:1005"
-              style={{ maskType: "alpha" }}
-              maskUnits="userSpaceOnUse"
-              x="0"
-              y="0"
-              width="1440"
-              height="969"
+            <rect width="1440" height="969" fill="#090E34" />
+          </mask>
+          <g mask="url(#mask0_95:1005)">
+            <path
+              opacity="0.1"
+              d="M1086.96 297.978L632.959 554.978L935.625 535.926L1086.96 297.978Z"
+              fill="url(#paint0_linear_95:1005)"
+            />
+            <path
+              opacity="0.1"
+              d="M1324.5 755.5L1450 687V886.5L1324.5 967.5L-10 288L1324.5 755.5Z"
+              fill="url(#paint1_linear_95:1005)"
+            />
+          </g>
+          <defs>
+            <linearGradient
+              id="paint0_linear_95:1005"
+              x1="1178.4"
+              y1="151.853"
+              x2="780.959"
+              y2="453.581"
+              gradientUnits="userSpaceOnUse"
             >
-              <rect width="1440" height="969" fill="#090E34" />
-            </mask>
-            <g mask="url(#mask0_95:1005)">
-              <path
-                opacity="0.1"
-                d="M1086.96 297.978L632.959 554.978L935.625 535.926L1086.96 297.978Z"
-                fill="url(#paint0_linear_95:1005)"
+              <stop stopColor="var(--color-primary)" />
+              <stop
+                offset="1"
+                stopColor="var(--color-primary)"
+                stopOpacity="0"
               />
-              <path
-                opacity="0.1"
-                d="M1324.5 755.5L1450 687V886.5L1324.5 967.5L-10 288L1324.5 755.5Z"
-                fill="url(#paint1_linear_95:1005)"
+            </linearGradient>
+            <linearGradient
+              id="paint1_linear_95:1005"
+              x1="160.5"
+              y1="220"
+              x2="1099.45"
+              y2="1192.04"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="var(--color-primary)" />
+              <stop
+                offset="1"
+                stopColor="var(--color-primary)"
+                stopOpacity="0"
               />
-            </g>
-            <defs>
-              <linearGradient
-                id="paint0_linear_95:1005"
-                x1="1178.4"
-                y1="151.853"
-                x2="780.959"
-                y2="453.581"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="var(--color-primary)" />
-                <stop
-                  offset="1"
-                  stopColor="var(--color-primary)"
-                  stopOpacity="0"
-                />
-              </linearGradient>
-              <linearGradient
-                id="paint1_linear_95:1005"
-                x1="160.5"
-                y1="220"
-                x2="1099.45"
-                y2="1192.04"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop stopColor="var(--color-primary)" />
-                <stop
-                  offset="1"
-                  stopColor="var(--color-primary)"
-                  stopOpacity="0"
-                />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
     </section>
   );
 }

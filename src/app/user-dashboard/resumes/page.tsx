@@ -16,14 +16,12 @@ export default function ResumesPage() {
     setResumeHtml(html);
     setResumeJson(json);
     // Save to your MongoDB via API route
-    console.log("Resume JSON:", json);
   };
 
   const [post, setPost] = useState("");
 
   const onChange = (content: string) => {
     setPost(content);
-    console.log(content);
   };
 
   const initialTemplate = `
@@ -43,7 +41,7 @@ export default function ResumesPage() {
         <div className="mx-auto max-w-6xl">
           <div className="rounded-xl border border-gray-300 backdrop-blur-sm dark:border-gray-800">
             <div className="relative rounded-xl bg-white p-6 dark:bg-gray-900">
-            <div className="bg-primary dark:bg-primary/80 absolute top-8 left-0 h-10 w-[4px] -translate-x-1/2 rounded-full" />
+              <div className="bg-primary dark:bg-primary/80 absolute top-8 left-0 h-10 w-[4px] -translate-x-1/2 rounded-full" />
               <div className="flex items-center gap-4">
                 <FileChartColumn className="xs:mb-0 text-primary dark:text-primary/80 mb-1 h-10 w-10" />
                 <div>

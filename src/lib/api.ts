@@ -1,6 +1,6 @@
-import { tryRefreshToken } from "@/helpers/refreshToken";
 import { ApiError } from "./errors";
 import { logoutDirect } from "@/hook/useLogout";
+import { refreshAccessToken } from "./refresh";
 
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000";
@@ -21,17 +21,24 @@ export const API_BASE =
 //   return res.json() as Promise<T>;
 // }
 
-export async function apiFetchWithoutToken<T = any>(path: string, init?: RequestInit): Promise<T> {
-  const base = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:4000/api';
-  const u = path.startsWith('http') ? path : `${base}${path}`;
-  const url = init?.method === 'GET' || !init?.method
-    ? `${u}${u.includes('?') ? '&' : '?'}_=${Date.now()}` // cache buster
-    : u;
+export async function apiFetchWithoutToken<T = any>(
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
+  const base = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000/api";
+  const u = path.startsWith("http") ? path : `${base}${path}`;
+  const url =
+    init?.method === "GET" || !init?.method
+      ? `${u}${u.includes("?") ? "&" : "?"}_=${Date.now()}` // cache buster
+      : u;
   const res = await fetch(url, {
-    method: init?.method || 'GET',
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
-    cache: 'no-store',
-    ...init
+    method: init?.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+    },
+    cache: "no-store",
+    ...init,
   });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
@@ -63,50 +70,55 @@ export async function apiFetch<T = any>(
       method: init?.method || "GET",
       headers,
       cache: "no-store",
+      credentials: "include", // 🔑 refresh cookie always sent
       ...init,
     });
   }
 
-  // First request attempt
+  // 1️⃣ First request attempt
   let res = await makeRequest();
   let text = await res.text();
 
-  // Extract backend message
+  // 2️⃣ Extract backend message safely
   let msg = text;
   try {
     msg = JSON.parse(text)?.message;
   } catch {}
 
   const shouldRefresh =
+    res.status === 401 ||
+    res.status === 403 ||
     msg === "No token provided" ||
     msg === "Invalid token" ||
     msg === "Token expired";
 
+  // 3️⃣ Refresh access token (ONLY ONCE)
   if (!res.ok && shouldRefresh) {
-    const refreshed = await tryRefreshToken();
+    const refreshed = await refreshAccessToken();
 
     if (!refreshed) {
       logoutDirect();
       return Promise.reject("Refresh failed");
     }
 
-    // 🔄 retry with new token
+    // 🔄 Retry with new access token
     res = await makeRequest();
     text = await res.text();
   }
 
+  // 4️⃣ Final error handling
   if (!res.ok) {
     let errMsg = "Request failed";
-  
+
     try {
       const parsed = JSON.parse(text);
       errMsg = parsed.message || text;
     } catch {
       errMsg = text;
     }
-  
+
     throw new Error(errMsg);
-  }  
+  }
 
   return JSON.parse(text);
 }

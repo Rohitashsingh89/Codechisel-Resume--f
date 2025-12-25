@@ -70,7 +70,7 @@ export default function CreateResumeModal({
               "additional",
             ],
           },
-        })
+        }),
       ).unwrap();
 
       if (newId) {
@@ -141,9 +141,7 @@ export default function CreateResumeModal({
 
         {/* Error */}
         {error && (
-          <div className="text-sm text-red-600 dark:text-red-400">
-            {error}
-          </div>
+          <div className="text-sm text-red-600 dark:text-red-400">{error}</div>
         )}
 
         {/* Actions */}

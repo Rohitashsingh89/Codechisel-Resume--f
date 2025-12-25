@@ -104,7 +104,7 @@ export default function DownloadUsagePage() {
               <div className="relative rounded-xl bg-white p-6 dark:bg-gray-900">
                 <div className="bg-primary dark:bg-primary/80 absolute top-8 left-0 h-10 w-[4px] -translate-x-1/2 rounded-full" />
                 <div className="xs:flex block items-center gap-3">
-                  <Download className="xs:mb-0 mb-1 h-10 w-10 text-primary dark:text-primary/80" />
+                  <Download className="xs:mb-0 text-primary dark:text-primary/80 mb-1 h-10 w-10" />
                   <div>
                     <h1 className="text-2xl font-bold text-slate-800 dark:text-gray-100">
                       Download Usage

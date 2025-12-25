@@ -16,7 +16,10 @@ type Options = RequestInit & {
   toast?: ToastMessages; // optional toast messages per request
 };
 
-export async function fetchJson<T>(url: string, opts: Options = {}): Promise<T> {
+export async function fetchJson<T>(
+  url: string,
+  opts: Options = {},
+): Promise<T> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     ...(opts.headers || {}),
@@ -55,13 +58,12 @@ export async function fetchJson<T>(url: string, opts: Options = {}): Promise<T> 
       error: (e) =>
         typeof opts.toast?.error === "function"
           ? opts.toast.error(e)
-          : opts.toast?.error || (e?.message || "Something went wrong"),
+          : opts.toast?.error || e?.message || "Something went wrong",
     });
   }
 
   return await doFetch();
 }
-
 
 // // src/lib/http.ts
 // const BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:4000/api";

@@ -29,13 +29,12 @@ export const fetchActiveTemplates = createAsyncThunk<TemplateMeta[]>(
   "themeRegistry/fetchActiveTemplates",
   async () => {
     const res = await apiFetch<{ templates?: any[] }>(
-      "/v1/templates?isActive=true"
+      "/v1/templates?isActive=true",
     );
-console.log("Fetched templates response:", res);
     if (!Array.isArray(res.templates)) return [];
     // Type cast to TemplateMeta[] (assuming backend shape match karti hai)
     return res.templates as TemplateMeta[];
-  }
+  },
 );
 
 const themeRegistrySlice = createSlice({

@@ -1,6 +1,6 @@
-'use client';
-import React from 'react';
-import { inputBase } from './InputBase';
+"use client";
+import React from "react";
+import { textAreaInputBase } from "./InputBase";
 
 type Props = {
   rows?: number;
@@ -11,7 +11,14 @@ type Props = {
   required?: boolean;
 };
 
-function TextAreaImpl({ rows = 3, placeholder, value, onChange, label, required }: Props) {
+function TextAreaImpl({
+  rows = 3,
+  placeholder,
+  value,
+  onChange,
+  label,
+  required,
+}: Props) {
   return (
     <div className="space-y-1">
       {label && (
@@ -21,7 +28,7 @@ function TextAreaImpl({ rows = 3, placeholder, value, onChange, label, required 
       )}
       <textarea
         rows={rows}
-        className={inputBase}
+        className={textAreaInputBase}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}

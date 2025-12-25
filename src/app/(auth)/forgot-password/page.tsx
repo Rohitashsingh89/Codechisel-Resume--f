@@ -123,7 +123,11 @@ export default function ForgotPasswordPage() {
               gradientUnits="userSpaceOnUse"
             >
               <stop stopColor="var(--color-primary)" />
-              <stop offset="1" stopColor="var(--color-primary)" stopOpacity="0" />
+              <stop
+                offset="1"
+                stopColor="var(--color-primary)"
+                stopOpacity="0"
+              />
             </linearGradient>
             <linearGradient
               id="paint1_linear"
@@ -134,7 +138,11 @@ export default function ForgotPasswordPage() {
               gradientUnits="userSpaceOnUse"
             >
               <stop stopColor="var(--color-primary)" />
-              <stop offset="1" stopColor="var(--color-primary)" stopOpacity="0" />
+              <stop
+                offset="1"
+                stopColor="var(--color-primary)"
+                stopOpacity="0"
+              />
             </linearGradient>
           </defs>
         </svg>

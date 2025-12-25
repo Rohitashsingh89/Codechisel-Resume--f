@@ -59,7 +59,6 @@ export const fetchDownloadLogs = createAsyncThunk(
         limit: "20",
       });
       const res = await apiFetch(`/v1/dashboard/admin/download-logs?${params}`);
-      console.log("Fetched download logs:", res);
       return {
         logs: res.logs || [],
         totalLogs: res.total || 0,
@@ -100,7 +99,7 @@ export const fetchUserDownloadLogs = createAsyncThunk(
       toast.error(msg);
       return rejectWithValue(msg);
     }
-  }
+  },
 );
 
 export const deleteDownloadLog = createAsyncThunk(

@@ -1,64 +1,68 @@
 "use client";
-import React from "react";
-import { ResumeShape } from "@/types/resumeTemplate";
-import ThemeBasic from "./theme/ThemeBasic";
-import { themeRegistry } from "./theme/registry";
-import { useResumeBuilder } from "@/hook/useResumeBuilder";
 
-function tint(hex: string, ratio = 0.6) {
-  // simple lighten: mix with white
-  const n = hex.replace("#", "");
-  const r = parseInt(n.slice(0, 2), 16),
-    g = parseInt(n.slice(2, 4), 16),
-    b = parseInt(n.slice(4, 6), 16);
-  const mix = (c: number) => Math.round(c + (255 - c) * ratio);
-  const toHex = (c: number) => c.toString(16).padStart(2, "0");
-  return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
-}
+import React from "react";
+import { ResumeShape, TemplateConfig } from "@/types/resumeTemplate";
+import { useResumeBuilder } from "@/hook/useResumeBuilder";
+import ResumeRenderer from "../ResumeRenderer/ResumeRenderer";
 
 type ResumePreviewProps = {
   data: ResumeShape;
   completion: number;
   templateType: string;
+  config?: TemplateConfig | null;
+  isFallback?: boolean;
+  loading?: boolean;
 };
 
 export default function ResumePreview({
   data,
   completion,
   templateType,
+  config,
+  isFallback,
+  loading,
 }: ResumePreviewProps) {
-  const Comp = themeRegistry[templateType] ?? ThemeBasic;
-  const themeContext = useResumeBuilder();
+  const { theme } = useResumeBuilder();
+  const accent = theme?.color ?? "#2563eb";
 
-  const accent = themeContext?.theme?.color ?? "#2563eb";
-  const accent2 = tint(accent, 0.55);
   return (
     <div
-      className="p-5"
-      style={
-        {
-          // consumed by themes
-          ["--accent" as any]: accent,
-          ["--accent-2" as any]: accent2,
-        } as React.CSSProperties
-      }
+      className="p-2 sm:p-5"
+      style={{ ["--accent" as any]: accent } as React.CSSProperties}
     >
-      <div className="mb-4 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-200">
-          <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500"></div>
+      {/* STATUS BAR */}
+      <div className="mb-4 flex items-center justify-center gap-2 text-sm">
+        <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 font-medium text-gray-700 dark:bg-gray-900 dark:text-gray-200">
+          <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
           Preview — {Math.round(completion)}% Complete
         </div>
-      </div>
-      <div
-        className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 overflow-hidden"
-        style={{
-          minHeight: "297mm",
-          boxSizing: "border-box",
-        }}
-      >
 
-      <Comp data={data} templateType={templateType} completion={completion} />
-    </div>
+        {loading ? (
+          <span className="text-xs text-gray-500">Loading template…</span>
+        ) : isFallback ? (
+          <span className="rounded-full border border-amber-300 bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700">
+            Fallback mode
+          </span>
+        ) : (
+          <span className="rounded-full border border-indigo-300 bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+            Dynamic template
+          </span>
+        )}
+      </div>
+
+      {/* PAGE */}
+      <div className="no-scrollbar w-full overflow-x-auto">
+        <div
+          className="mx-auto border border-gray-300 bg-white dark:border-gray-800 dark:bg-gray-900"
+          style={{
+            width: "210mm",
+            minHeight: "297mm",
+            boxSizing: "border-box",
+          }}
+        >
+          <ResumeRenderer data={data} config={config} isFallback={isFallback} />
+        </div>
+      </div>
     </div>
   );
 }

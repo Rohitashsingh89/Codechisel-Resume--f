@@ -40,6 +40,11 @@ export type ResumeBuilderState = {
   loading: boolean;
   lastChangeSeq: number;
   lastChangeTs: number;
+  selectedTemplateSlug?: string | null;
+
+  config: any | null;
+  configLoading: boolean;
+  isFallback: boolean;
 };
 
 const initialData: ResumeShape = {
@@ -74,6 +79,11 @@ const initialState: ResumeBuilderState = {
   loading: false,
   lastChangeSeq: 0,
   lastChangeTs: 0,
+  selectedTemplateSlug: null,
+
+  config: null,
+  configLoading: false,
+  isFallback: true,
 };
 
 function isEmail(v: string) {
@@ -115,18 +125,25 @@ export const loadResumeForBuilder = createAsyncThunk<
     templateType: TemplateType;
     data: ResumeShape;
     theme: Theme;
+    selectedTemplateSlug?: string | null;
   },
   string
 >("resumeBuilder/loadResumeForBuilder", async (resumeId: string) => {
   const res = await apiFetch<{ item: any }>(`/v1/resumes/${resumeId}`, {
-    method: "GET"
+    method: "GET",
   });
   const it = res.item || {};
   return {
     resumeId,
     templateType: (it.templateType as TemplateType) || "classic",
-    data: { ...initialData, ...(it.resumeData || {}), resumeName: it.resumeName || it.resumeData?.resumeName || "", },
+    data: {
+      ...initialData,
+      ...(it.resumeData || {}),
+      resumeName: it.resumeName || it.resumeData?.resumeName || "",
+      selectedTemplateSlug: it.selectedTemplateSlug ?? it.templateType ?? null,
+    },
     theme: it.theme ?? { mode: "light", color: "#2563eb" },
+    selectedTemplateSlug: it.selectedTemplateSlug ?? it.templateType ?? null,
   };
 });
 
@@ -134,7 +151,6 @@ export const loadResumeForBuilder = createAsyncThunk<
 export const saveResume = createAsyncThunk<void, void, { state: RootState }>(
   "resumeBuilder/saveResume",
   async (_, thunkApi) => {
-    
     const state = thunkApi.getState().resumeBuilder;
     const { resumeId, templateType, data, theme } = state;
 
@@ -143,7 +159,14 @@ export const saveResume = createAsyncThunk<void, void, { state: RootState }>(
     await apiFetch(`/v1/resumes/${resumeId}`, {
       method: "PUT",
       // headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ templateType, resumeData: data, theme, resumeName: data.resumeName }),
+      body: JSON.stringify({
+        templateType,
+        resumeData: data,
+        theme,
+        resumeName: data.resumeName,
+        selectedTemplateSlug:
+          (data as any).selectedTemplateSlug ?? templateType,
+      }),
     });
   },
 );
@@ -204,6 +227,23 @@ const resumeBuilderSlice = createSlice({
     resetBuilder(state) {
       Object.assign(state, initialState);
     },
+
+    setSelectedTemplateSlug(state, action: PayloadAction<string | null>) {
+      state.selectedTemplateSlug = action.payload;
+      state.dirty = true;
+    },
+
+    setConfig(state, action: PayloadAction<any | null>) {
+      state.config = action.payload;
+    },
+
+    setConfigLoading(state, action: PayloadAction<boolean>) {
+      state.configLoading = action.payload;
+    },
+
+    setIsFallback(state, action: PayloadAction<boolean>) {
+      state.isFallback = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -216,6 +256,8 @@ const resumeBuilderSlice = createSlice({
         state.templateType = action.payload.templateType;
         state.data = action.payload.data;
         state.theme = action.payload.theme;
+        state.selectedTemplateSlug =
+          action.payload.selectedTemplateSlug ?? null;
         state.completion = computeCompletion(state.data);
         state.dirty = false;
         state.lastChangeSeq += 1;
@@ -241,6 +283,10 @@ export const {
   setTheme,
   setDirty,
   resetBuilder,
+  setSelectedTemplateSlug,
+  setConfig,
+  setConfigLoading,
+  setIsFallback,
 } = resumeBuilderSlice.actions;
 
 export default resumeBuilderSlice.reducer;

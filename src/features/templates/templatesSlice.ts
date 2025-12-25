@@ -1,17 +1,14 @@
 "use client";
 
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { apiFetch } from "@/lib/api";
-import toast from "react-hot-toast";
-
-export interface Template {
-  _id: string;
-  name: string;
-  slug: string;
-  category: string;
-  isActive: boolean;
-  createdAt: string;
-}
+import { Template } from "@/types/common";
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createAction,
+} from "@reduxjs/toolkit";
+import { toast } from "react-hot-toast";
 
 type Columns = {
   name: boolean;
@@ -21,7 +18,7 @@ type Columns = {
   createdAt: boolean;
 };
 
-type TemplatesState = {
+export interface TemplatesState {
   templates: Template[];
   totalPages: number;
   loading: boolean;
@@ -36,22 +33,31 @@ type TemplatesState = {
   page: number;
   limit: number;
 
-  // columns
+  // columns & UI
   columns: Columns;
   showColumnsDropdown: boolean;
 
   // modals
-  isModalOpen: boolean;
+  isAddModalOpen: boolean;
+  isEditModalOpen: boolean;
   editTemplate: Template | null;
   newTemplate: {
     name: string;
     slug: string;
     category: string;
+    isPremium: boolean;
+    config: string;
     isActive: boolean;
   };
 
   confirmDeleteSlug: string | null;
-};
+
+  // stats (mirroring plans)
+  totalTemplates: number;
+  totalActiveTemplates: number;
+  totalInactiveTemplates: number;
+  categoryCounts: Record<string, number>;
+}
 
 const initialState: TemplatesState = {
   templates: [],
@@ -75,18 +81,50 @@ const initialState: TemplatesState = {
   },
   showColumnsDropdown: false,
 
-  isModalOpen: false,
+  isAddModalOpen: false,
+  isEditModalOpen: false,
   editTemplate: null,
-  newTemplate: { name: "", slug: "", category: "business", isActive: true },
+  newTemplate: {
+    name: "",
+    slug: "",
+    category: "",
+    isPremium: false,
+    config: "",
+    isActive: true,
+  },
 
   confirmDeleteSlug: null,
+
+  totalTemplates: 0,
+  totalActiveTemplates: 0,
+  totalInactiveTemplates: 0,
+  categoryCounts: {},
 };
 
-// ---------- Async Thunks ----------
+export const resetNewTemplate = createAction("templates/resetNewTemplate");
+export const resetEditTemplate = createAction("templates/resetEditTemplate");
 
-// Get templates list
+/**
+ * GET /v1/templates?search=&category=&isActive=&page=&limit=
+ * Response shape expected:
+ * {
+ *   templates: Template[];
+ *   totalPages: number;
+ *   totalTemplates?: number;
+ *   totalActiveTemplates?: number;
+ *   totalInactiveTemplates?: number;
+ *   categoryCounts?: Record<string, number>;
+ * }
+ */
 export const fetchTemplates = createAsyncThunk<
-  { templates: Template[]; totalPages: number },
+  {
+    templates: Template[];
+    totalPages: number;
+    totalTemplates?: number;
+    totalActiveTemplates?: number;
+    totalInactiveTemplates?: number;
+    categoryCounts?: Record<string, number>;
+  },
   void,
   { state: { templates: TemplatesState } }
 >("templates/fetchTemplates", async (_, { getState }) => {
@@ -100,32 +138,41 @@ export const fetchTemplates = createAsyncThunk<
     limit: String(state.limit),
   });
 
-  const res = await apiFetch<{ templates: Template[]; totalPages: number }>(
-    `/v1/templates?${query}`,
-  );
+  const res = await apiFetch<{
+    templates: Template[];
+    totalPages: number;
+    totalTemplates?: number;
+    totalActiveTemplates?: number;
+    totalInactiveTemplates?: number;
+    categoryCounts?: Record<string, number>;
+  }>(`/v1/templates?${query}`);
+
   return {
     templates: res.templates,
-    totalPages: res.totalPages || 1,
+    totalPages: res.totalPages ?? 1,
+    totalTemplates: res.totalTemplates,
+    totalActiveTemplates: res.totalActiveTemplates,
+    totalInactiveTemplates: res.totalInactiveTemplates,
+    categoryCounts: res.categoryCounts,
   };
 });
 
-// Add template
 export const addTemplate = createAsyncThunk<
   void,
   void,
-  { state: { templates: TemplatesState } }
+  { state: { templates: TemplatesState }; dispatch: any }
 >("templates/addTemplate", async (_, { getState, dispatch }) => {
-  const { newTemplate } = getState().templates;
+  const newTemplate = getState().templates.newTemplate;
 
   await toast.promise(
-    apiFetch(`/v1/templates`, {
+    apiFetch("/v1/templates", {
       method: "POST",
       body: JSON.stringify(newTemplate),
     }),
     {
-      loading: "Saving template…",
+      loading: "Saving template...",
       success: "Template added!",
-      error: "Failed to add template",
+      error: (err: any) => err?.message || "Failed to add template",
     },
   );
 
@@ -133,13 +180,12 @@ export const addTemplate = createAsyncThunk<
   await dispatch(fetchTemplates());
 });
 
-// Update template
 export const updateTemplate = createAsyncThunk<
   void,
   void,
-  { state: { templates: TemplatesState } }
+  { state: { templates: TemplatesState }; dispatch: any }
 >("templates/updateTemplate", async (_, { getState, dispatch }) => {
-  const { editTemplate } = getState().templates;
+  const editTemplate = getState().templates.editTemplate;
   if (!editTemplate) return;
 
   await toast.promise(
@@ -148,9 +194,9 @@ export const updateTemplate = createAsyncThunk<
       body: JSON.stringify(editTemplate),
     }),
     {
-      loading: "Updating…",
+      loading: "Updating...",
       success: "Template updated!",
-      error: "Failed to update template",
+      error: (err: any) => err?.message || "Failed to update template",
     },
   );
 
@@ -158,8 +204,7 @@ export const updateTemplate = createAsyncThunk<
   await dispatch(fetchTemplates());
 });
 
-// Delete template
-export const deleteTemplate = createAsyncThunk<void, string>(
+export const deleteTemplate = createAsyncThunk<void, string, { dispatch: any }>(
   "templates/deleteTemplate",
   async (slug, { dispatch }) => {
     await toast.promise(
@@ -167,9 +212,9 @@ export const deleteTemplate = createAsyncThunk<void, string>(
         method: "DELETE",
       }),
       {
-        loading: "Deleting…",
+        loading: "Deleting...",
         success: "Template deleted",
-        error: "Delete failed",
+        error: (err: any) => err?.message || "Delete failed",
       },
     );
 
@@ -177,13 +222,11 @@ export const deleteTemplate = createAsyncThunk<void, string>(
   },
 );
 
-// ---------- Slice ----------
-
 const templatesSlice = createSlice({
   name: "templates",
   initialState,
   reducers: {
-    // filters / paging
+    // filters & pagination
     setSearch(state, action: PayloadAction<string>) {
       state.search = action.payload;
       state.page = 1;
@@ -215,10 +258,11 @@ const templatesSlice = createSlice({
 
     // add modal
     openAdd(state) {
-      state.isModalOpen = true;
+      state.isAddModalOpen = true;
+      state.isEditModalOpen = false;
     },
     closeAdd(state) {
-      state.isModalOpen = false;
+      state.isAddModalOpen = false;
       state.newTemplate = initialState.newTemplate;
     },
     updateNew(
@@ -231,8 +275,11 @@ const templatesSlice = createSlice({
     // edit modal
     openEdit(state, action: PayloadAction<Template>) {
       state.editTemplate = action.payload;
+      state.isEditModalOpen = true;
+      state.isAddModalOpen = false;
     },
     closeEdit(state) {
+      state.isEditModalOpen = false;
       state.editTemplate = null;
     },
     updateEdit(state, action: PayloadAction<Partial<Template>>) {
@@ -249,22 +296,35 @@ const templatesSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // fetchTemplates
     builder
+      // fetch
       .addCase(fetchTemplates.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchTemplates.fulfilled, (state, action) => {
         state.loading = false;
         state.templates = action.payload.templates;
-        state.totalPages = action.payload.totalPages || 1;
+        state.totalPages = action.payload.totalPages ?? 1;
+
+        const computedTotal =
+          action.payload.totalTemplates ?? state.templates.length;
+        const computedActive =
+          action.payload.totalActiveTemplates ??
+          state.templates.filter((t) => t.isActive).length;
+        const computedInactive =
+          action.payload.totalInactiveTemplates ??
+          computedTotal - computedActive;
+
+        state.totalTemplates = computedTotal;
+        state.totalActiveTemplates = computedActive;
+        state.totalInactiveTemplates = computedInactive;
+        state.categoryCounts = action.payload.categoryCounts ?? {};
       })
       .addCase(fetchTemplates.rejected, (state) => {
         state.loading = false;
-      });
+      })
 
-    // addTemplate / updateTemplate / deleteTemplate – just handle submitting flag
-    builder
+      // add
       .addCase(addTemplate.pending, (state) => {
         state.submitting = true;
       })
@@ -274,6 +334,8 @@ const templatesSlice = createSlice({
       .addCase(addTemplate.rejected, (state) => {
         state.submitting = false;
       })
+
+      // update
       .addCase(updateTemplate.pending, (state) => {
         state.submitting = true;
       })
@@ -283,6 +345,8 @@ const templatesSlice = createSlice({
       .addCase(updateTemplate.rejected, (state) => {
         state.submitting = false;
       })
+
+      // delete
       .addCase(deleteTemplate.pending, (state) => {
         state.submitting = true;
       })
@@ -291,6 +355,14 @@ const templatesSlice = createSlice({
       })
       .addCase(deleteTemplate.rejected, (state) => {
         state.submitting = false;
+      })
+
+      // reset helpers
+      .addCase(resetNewTemplate, (state) => {
+        state.newTemplate = initialState.newTemplate;
+      })
+      .addCase(resetEditTemplate, (state) => {
+        state.editTemplate = null;
       });
   },
 });

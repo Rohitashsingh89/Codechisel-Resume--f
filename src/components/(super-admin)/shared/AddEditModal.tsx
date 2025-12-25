@@ -4,14 +4,16 @@ import { useEffect, useCallback } from "react";
 interface FormField {
   key: string;
   label: string;
-  type: "text" | "number" | "select" | "date";
+  type: "text" | "number" | "select" | "date" | "textarea" | "boolean";
   required?: boolean;
   placeholder?: string;
   options?: Array<{ value: string; label: string }>;
-  value: string | number | undefined;
-  onChange: (value: string | number | undefined) => void;
+  value: string | number | boolean | undefined;
+  onChange: (value: string | number | boolean | undefined) => void;
   min?: number;
   step?: string;
+  rows?: number;
+  textareaClassName?: string;
 }
 
 interface AddEditModalProps {
@@ -25,6 +27,9 @@ interface AddEditModalProps {
   submitting: boolean;
   onClose: () => void;
   resetForm: () => void;
+  maxWidthClass?: string;
+  submitLabelAdd?: string;
+  submitLabelEdit?: string;
 }
 
 export default function AddEditModal({
@@ -36,6 +41,9 @@ export default function AddEditModal({
   onClose,
   submitting,
   resetForm,
+  maxWidthClass = "max-w-lg",
+  submitLabelAdd = "Create",
+  submitLabelEdit = "Update",
 }: AddEditModalProps) {
   const stableResetForm = useCallback(() => {
     resetForm();
@@ -60,9 +68,14 @@ export default function AddEditModal({
 
   if (!isOpen) return null;
 
+  const idleLabel = mode === "edit" ? submitLabelEdit : submitLabelAdd;
+  const busyLabel = mode === "edit" ? "Updating..." : "Creating...";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center rounded-xl bg-black/40 p-2 backdrop-blur-sm sm:p-4">
-      <div className="flex max-h-[90vh] w-full max-w-md flex-col rounded-xl bg-white/90 shadow-xl backdrop-blur-xl dark:bg-gray-900/80">
+      <div
+        className={`flex max-h-[90vh] w-full max-w-lg flex-col rounded-xl bg-white/90 shadow-xl backdrop-blur-xl dark:bg-gray-900/80 ${maxWidthClass}`}
+      >
         {/* HEADER (sticky) */}
         <div className="sticky top-0 z-10 flex-shrink-0 rounded-t-xl border-b border-gray-300 bg-white/90 px-3 py-6 sm:px-6 dark:border-gray-800 dark:bg-gray-900/80">
           <div className="flex items-center justify-between">
@@ -120,6 +133,31 @@ export default function AddEditModal({
                       </option>
                     ))}
                   </select>
+                ) : field.type === "textarea" ? (
+                  <textarea
+                    required={field.required}
+                    placeholder={field.placeholder}
+                    value={field.value?.toString() || ""}
+                    onChange={(e) =>
+                      field.onChange(e.target.value || undefined)
+                    }
+                    disabled={submitting}
+                    rows={field.rows ?? 5}
+                    className={`custom-scroll w-full rounded-lg border border-gray-300 bg-white/70 px-4 py-3 text-sm dark:border-gray-700 dark:bg-gray-800/70 dark:text-gray-100 ${field.textareaClassName ?? ""} `}
+                  />
+                ) : field.type === "boolean" ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(field.value)}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      disabled={submitting}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 dark:border-gray-600"
+                    />
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {field.placeholder ?? "Enable"}
+                    </span>
+                  </div>
                 ) : (
                   <input
                     type={field.type}
@@ -163,13 +201,7 @@ export default function AddEditModal({
                   : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
-              {submitting
-                ? mode === "edit"
-                  ? "Updating..."
-                  : "Creating..."
-                : mode === "edit"
-                  ? "Update Plan"
-                  : "Create Plan"}
+              {submitting ? busyLabel : idleLabel}
             </button>
           </div>
         </form>

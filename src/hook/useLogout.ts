@@ -31,13 +31,17 @@ export function useLogout() {
       toast.success("Logged out successfully!");
 
       // Redirect according to role
-      router.replace(role === "admin" ? "/admin-signin-page" : "/admin-signin-page");
+      router.replace(
+        role === "admin" ? "/admin-signin-page" : "/admin-signin-page",
+      );
     } catch (error) {
       // Fallback cleanup
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       dispatch(logOut());
-      router.replace(role === "admin" ? "/admin-signin-page" : "/admin-signin-page");
+      router.replace(
+        role === "admin" ? "/admin-signin-page" : "/admin-signin-page",
+      );
     }
   };
 
@@ -48,5 +52,6 @@ export function logoutDirect(role: "user" | "admin" = "user") {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
 
-  window.location.href = role === "admin" ? "/admin-signin-page" : "/admin-signin-page";
+  window.location.href =
+    role === "admin" ? "/admin-signin-page" : "/admin-signin-page";
 }

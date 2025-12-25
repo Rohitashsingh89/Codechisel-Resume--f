@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import ResumeHeader from "./ResumeHeader";
@@ -26,10 +26,14 @@ import MobileStickyBar from "./mobile/MobileStickyBar";
 import MobileSheet from "./mobile/MobileSheet";
 import ThemeModal from "./modal/ThemeModal";
 import { updateField } from "@/utils/apiUtility";
+import { apiFetch } from "@/lib/api";
 
-const SectionOrder = dynamic(() => import("@/components/(resumes)/resume/SectionOrder"), {
-  ssr: false,
-});
+const SectionOrder = dynamic(
+  () => import("@/components/(resumes)/resume/SectionOrder"),
+  {
+    ssr: false,
+  },
+);
 
 const StepRenderer = ({
   stepKey,
@@ -77,6 +81,13 @@ export default function BuilderClient({ id }: { id: string }) {
     save,
     load,
     theme,
+    selectedTemplateSlug,
+    config,
+    configLoading,
+    isFallback,
+    setConfig,
+    setIsFallback,
+    setConfigLoading,
   } = useResumeBuilder();
 
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -85,9 +96,76 @@ export default function BuilderClient({ id }: { id: string }) {
   const [heading, setHeading] = useState("Untitled Resume");
   const [showSectionOrder, setShowSectionOrder] = useState(false);
 
-  const handleSetData = (patch: ResumeShape | Partial<ResumeShape>) => {
-    setData(patch);
-  };
+  useEffect(() => {
+    const slug = data.selectedTemplateSlug || templateType;
+    if (!slug) {
+      setConfig(null);
+      setIsFallback(true);
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        setConfigLoading(true);
+        const res = await apiFetch<{ template?: { config?: any } }>(
+          `/v1/templates/${slug}`,
+        );
+
+        if (cancelled) return;
+
+        if (res?.template?.config) {
+          let parsedConfig: any;
+
+          if (typeof res.template.config === "string") {
+            try {
+              parsedConfig = JSON.parse(res.template.config);
+            } catch {
+              parsedConfig = null;
+            }
+          } else {
+            parsedConfig = res.template.config;
+          }
+
+          if (parsedConfig) {
+            setConfig(parsedConfig);
+            setIsFallback(false);
+          } else {
+            setConfig(null);
+            setIsFallback(true);
+          }
+        } else {
+          setConfig(null);
+          setIsFallback(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setConfig(null);
+          setIsFallback(true);
+        }
+      } finally {
+        if (!cancelled) setConfigLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    data.selectedTemplateSlug,
+    templateType,
+    setConfig,
+    setIsFallback,
+    setConfigLoading,
+  ]);
+
+  const handleSetData = useCallback(
+    (patch: ResumeShape | Partial<ResumeShape>) => {
+      setData(patch);
+    },
+    [setData],
+  );
 
   useEffect(() => {
     if (id) load(id);
@@ -131,6 +209,8 @@ export default function BuilderClient({ id }: { id: string }) {
             data={data}
             completion={completion}
             templateType={templateType}
+            config={config}
+            isFallback={isFallback}
           />
         </div>
 
@@ -155,7 +235,7 @@ export default function BuilderClient({ id }: { id: string }) {
                 title={
                   showSectionOrder ? "Hide Section Order" : "Show Section Order"
                 }
-                className="rounded bg-gray-200 px-2 py-1 text-sm text-dark dark:text-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+                className="text-dark rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                 onClick={() => setShowSectionOrder(!showSectionOrder)}
               >
                 {/* Show short text on small screens, full text on md+ */}
@@ -212,7 +292,10 @@ export default function BuilderClient({ id }: { id: string }) {
             onSelect={async (t) => {
               setTemplateType(t);
               setThemeOpen(false);
-              await updateField(id, { templateType: t });
+              await updateField(id, {
+                templateType: t,
+                selectedTemplateSlug: t,
+              });
             }}
           />
         )}
@@ -248,7 +331,7 @@ export default function BuilderClient({ id }: { id: string }) {
                           ? "Hide Section Order"
                           : "Show Section Order"
                       }
-                      className="rounded bg-gray-200 px-2 py-1 text-dark dark:text-gray-200 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+                      className="text-dark rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
                       onClick={() => setShowSectionOrder(!showSectionOrder)}
                     >
                       <span className="md:hidden">
@@ -301,6 +384,8 @@ export default function BuilderClient({ id }: { id: string }) {
                     data={data}
                     completion={completion}
                     templateType={templateType}
+                    config={config}
+                    isFallback={isFallback}
                   />
                 </div>
               }
