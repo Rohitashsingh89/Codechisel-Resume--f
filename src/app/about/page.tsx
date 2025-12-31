@@ -1,6 +1,8 @@
 import AboutSectionOne from "@/components/(landing-page)/About/AboutSectionOne";
 import AboutSectionTwo from "@/components/(landing-page)/About/AboutSectionTwo";
 import Breadcrumb from "@/components/Common/Breadcrumb";
+import About from "@/components/home/sections/about";
+import WhyChoose from "@/components/home/sections/why-choose";
 
 import { Metadata } from "next";
 
@@ -18,6 +20,9 @@ const AboutPage = () => {
       />
       <AboutSectionOne />
       <AboutSectionTwo />
+      
+      <About />
+        <WhyChoose />
     </>
   );
 };

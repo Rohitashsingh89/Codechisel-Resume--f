@@ -34,7 +34,7 @@ const BlogDetailsPage = () => {
                       </div>
                       <div className="w-full">
                         <span className="text-body-color mb-1 text-base font-medium">
-                          By <span>Rohitash Singh</span>
+                          By <span>John deo</span>
                         </span>
                       </div>
                     </div>

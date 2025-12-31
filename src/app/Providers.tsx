@@ -12,6 +12,7 @@ import ScrollToTop from "@/components/(global)/ScrollToTop";
 import PrivateRoute from "@/components/(global)/private/PrivateRoute";
 import MotivationalTracker from "@/components/crazy/MotivationalTracker";
 import Header from "@/components/(landing-page)/Header";
+import ResumeNavbar from "@/components/(landing-page)/Header/ResumeNavbar";
 
 export function Providers({ children }) {
   const pathname = usePathname();
@@ -37,6 +38,8 @@ export function Providers({ children }) {
   const isPrivate = privateRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
+  const showResumeNavbar =
+    pathname.startsWith("/resume/") && pathname !== "/resume";
 
   return (
     <ReduxProvider>
@@ -44,7 +47,8 @@ export function Providers({ children }) {
         <AuthBootstrap>
           <RouteTracker />
 
-          {!hideLayout && <Header />}
+          {!hideLayout && !showResumeNavbar && <Header />}
+          {showResumeNavbar && <ResumeNavbar />}
 
           {isPrivate ? <PrivateRoute>{children}</PrivateRoute> : children}
 
@@ -56,7 +60,7 @@ export function Providers({ children }) {
             containerStyle={{ zIndex: 100000 }}
           />
 
-          {!hideLayout && <Footer />}
+          {!hideLayout && !showResumeNavbar && <Footer />}
 
           <ScrollToTop />
         </AuthBootstrap>

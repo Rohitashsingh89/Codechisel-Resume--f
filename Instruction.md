@@ -128,3 +128,18 @@ Only One super admin would be there in any application.
   }
 }
 PROJECT_DATA_END -->
+
+| Section      | Status |
+| ------------ | ------ |
+| Hero         | ⬜      |
+| Trust        | ⬜      |
+| Features     | ✅      |
+| Resumes      | ✅      |
+| How it Works | ⬜      |
+| ATS          | ⬜      |
+| Who for      | ⬜      |
+| Pricing      | ⬜      |
+| Testimonials | ⬜      |
+| FAQ          | ⬜      |
+| Final CTA    | ⬜      |
+| Footer       | ⬜      |

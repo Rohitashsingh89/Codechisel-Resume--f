@@ -32,7 +32,7 @@ export function useLogout() {
 
       // Redirect according to role
       router.replace(
-        role === "admin" ? "/admin-signin-page" : "/admin-signin-page",
+        role === "admin" ? "/admin-signin-page" : "/signin",
       );
     } catch (error) {
       // Fallback cleanup
@@ -40,7 +40,7 @@ export function useLogout() {
       localStorage.removeItem("refreshToken");
       dispatch(logOut());
       router.replace(
-        role === "admin" ? "/admin-signin-page" : "/admin-signin-page",
+        role === "admin" ? "/admin-signin-page" : "/signin",
       );
     }
   };
@@ -53,5 +53,5 @@ export function logoutDirect(role: "user" | "admin" = "user") {
   localStorage.removeItem("refreshToken");
 
   window.location.href =
-    role === "admin" ? "/admin-signin-page" : "/admin-signin-page";
+    role === "admin" ? "/admin-signin-page" : "/signin";
 }

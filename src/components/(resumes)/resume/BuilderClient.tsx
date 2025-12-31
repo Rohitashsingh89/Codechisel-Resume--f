@@ -27,6 +27,7 @@ import MobileSheet from "./mobile/MobileSheet";
 import ThemeModal from "./modal/ThemeModal";
 import { updateField } from "@/utils/apiUtility";
 import { apiFetch } from "@/lib/api";
+import { Check, Dot, Ellipsis } from "lucide-react";
 
 const SectionOrder = dynamic(
   () => import("@/components/(resumes)/resume/SectionOrder"),
@@ -303,7 +304,7 @@ export default function BuilderClient({ id }: { id: string }) {
 
       {/* Desktop/tablet: keep your existing two-column layout */}
       <section className="hidden min-h-screen bg-gray-50 py-24 md:block dark:bg-gray-950">
-        <div className="container mx-auto grid grid-cols-1 gap-4 rounded bg-white p-4 shadow-sm dark:bg-gray-900">
+        <div className="grid grid-cols-1 gap-4 rounded bg-white p-4 shadow-sm dark:bg-gray-900">
           <ResumeHeader id={id} />
 
           <div className="no-scrollbar h-[calc(100vh-0px)]">
@@ -313,70 +314,93 @@ export default function BuilderClient({ id }: { id: string }) {
               minRight={360}
               className="rounded border border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800"
               left={
-                <div className="h-full space-y-5 px-4 py-4">
-                  <ProgressBar
-                    completion={completion}
-                    step={step}
-                    total={steps.length}
-                    color={theme.color}
-                  />
+                <>
+                  {/* <div className="flex items-center justify-between bg-gray-100 px-4 py-2 dark:bg-gray-900">
+                    <div className="flex items-center font-medium text-gray-700 dark:text-gray-300">
+                      <Dot className="-mx-3 h-12 w-12 flex-shrink-0 text-emerald-500" />
+                      <span>Saved Automatically</span>
+                    </div>
 
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      Sections
-                    </span>
-                    <button
-                      title={
-                        showSectionOrder
-                          ? "Hide Section Order"
-                          : "Show Section Order"
-                      }
-                      className="text-dark rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-                      onClick={() => setShowSectionOrder(!showSectionOrder)}
-                    >
-                      <span className="md:hidden">
-                        {showSectionOrder ? "Hide" : "Show"}
-                      </span>
-                      <span className="hidden md:inline">
-                        {showSectionOrder
-                          ? "Hide Section Order"
-                          : "Show Section Order"}
-                      </span>
-                    </button>
-                  </div>
+                    <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400">
+                      <button
+                        type="button"
+                        className="rounded p-2 hover:bg-gray-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:hover:bg-gray-700"
+                      >
+                        <Ellipsis className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded p-2 hover:bg-gray-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:hover:bg-gray-700"
+                      >
+                        <Check className="h-5 w-5 text-green-500" />
+                      </button>
+                    </div>
+                  </div> */}
+                  <div className="h-full space-y-5 px-4 py-4">
+                    <ProgressBar
+                      completion={completion}
+                      step={step}
+                      total={steps.length}
+                      color={theme.color}
+                    />
 
-                  {showSectionOrder && (
-                    <div className="rounded-lg border border-gray-300 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
-                      {/* <h3 className="mb-2 font-semibold text-gray-800 dark:text-gray-100">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="font-medium text-gray-700 dark:text-gray-300">
+                        Sections
+                      </span>
+                      <button
+                        title={
+                          showSectionOrder
+                            ? "Hide Section Order"
+                            : "Show Section Order"
+                        }
+                        className="text-dark rounded bg-gray-200 px-2 py-1 text-sm hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+                        onClick={() => setShowSectionOrder(!showSectionOrder)}
+                      >
+                        <span className="md:hidden">
+                          {showSectionOrder ? "Hide" : "Show"}
+                        </span>
+                        <span className="hidden md:inline">
+                          {showSectionOrder
+                            ? "Hide Section Order"
+                            : "Show Section Order"}
+                        </span>
+                      </button>
+                    </div>
+
+                    {showSectionOrder && (
+                      <div className="rounded-lg border border-gray-300 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
+                        {/* <h3 className="mb-2 font-semibold text-gray-800 dark:text-gray-100">
                         Section Order
                       </h3> */}
-                      <SectionOrder
-                        order={data.order}
-                        onChange={(next: string[]) =>
-                          setData({ order: next as any })
-                        }
+                        <SectionOrder
+                          order={data.order}
+                          onChange={(next: string[]) =>
+                            setData({ order: next as any })
+                          }
+                        />
+                      </div>
+                    )}
+
+                    <div className="rounded border border-gray-300 p-4 dark:border-gray-700 dark:bg-gray-800">
+                      <StepRenderer
+                        stepKey={steps[step]}
+                        data={data}
+                        setData={handleSetData}
+                      />
+
+                      <StepFooter
+                        canGoBack={step > 0}
+                        canProceed={canProceed()}
+                        isLast={isLast}
+                        onBack={goBack}
+                        onNext={goNext}
+                        onSaveExit={onSaveExit}
+                        onPreview={() => setPreviewOpen(true)}
                       />
                     </div>
-                  )}
-
-                  <div className="rounded border border-gray-300 p-4 dark:border-gray-700 dark:bg-gray-800">
-                    <StepRenderer
-                      stepKey={steps[step]}
-                      data={data}
-                      setData={handleSetData}
-                    />
-
-                    <StepFooter
-                      canGoBack={step > 0}
-                      canProceed={canProceed()}
-                      isLast={isLast}
-                      onBack={goBack}
-                      onNext={goNext}
-                      onSaveExit={onSaveExit}
-                      onPreview={() => setPreviewOpen(true)}
-                    />
                   </div>
-                </div>
+                </>
               }
               right={
                 <div className="no-scrollbar h-full overflow-auto rounded-r">
