@@ -6,6 +6,7 @@ import ThemeToggler from "./ThemeToggler";
 import { SiCodecrafters } from "react-icons/si";
 import PrimaryLink from "@/components/Common/ui/PrimaryLink";
 import { resumeMenuData } from "./menuData";
+import Image from "next/image";
 
 const ResumeNavbar = () => {
   // Navbar toggle
@@ -131,10 +132,12 @@ const ResumeNavbar = () => {
 
               {/* User avatar */}
               <div>
-                <img
+              <Image
                   src="/images/hero/user.png"
                   alt="User avatar"
-                  className="h-10 w-10 rounded-full border-2 border-indigo-500"
+                  width={40}
+                  height={40}
+                  className="rounded-full border-2 border-indigo-500"
                 />
               </div>
 
