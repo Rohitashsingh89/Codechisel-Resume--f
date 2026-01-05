@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/hook/reduxHooks";
 import {
@@ -218,6 +219,14 @@ export default function AdminSigninPage() {
                   </button>
                 </div>
               </form>
+              <div>
+                  <Link
+                    href="/signin"
+                    className="text-primary mt-4 flex items-center justify-center hover:underline"
+                  >
+                    User Login
+                  </Link>
+                </div>
             </div>
           </div>
         </div>
